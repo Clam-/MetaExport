@@ -229,5 +229,3 @@ CHANGELOG
 
 2012-03-12      0.1
     * Initial release
-
-- clam@nyanya.org
