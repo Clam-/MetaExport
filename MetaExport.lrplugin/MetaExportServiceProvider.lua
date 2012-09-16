@@ -35,4 +35,8 @@ return {
 	
 	processRenderedPhotos = MetaExportTask.processRenderedPhotos,
 	
+	supportsIncrementalPublish = true,
+	canExportVideo = true,
+	small_icon = 'icon.png'
+	
 }

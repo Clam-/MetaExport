@@ -82,6 +82,13 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 					}
 
 	local failures = {}
+	
+	local publish
+	if exportContext.publishService then
+		   publish = true
+	else
+		   publish = false
+	end	
 
 	for _, rendition in exportContext:renditions{ stopIfCanceled = true } do
 	
@@ -129,39 +136,42 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 			local doCopy = true
 
 			if LrFileUtils.exists( newfile ) then
-				local overorskip = LrDialogs.promptForActionWithDoNotShow{
-					message = "Meta Export - File exists.",
-					info = "The file (" .. newfile .. ") already exists.\nDo you wish to overwrite the file?\n(Overwrite will completely delete the existing file. Skip will leave the existing file. Cancel will stop the export.)",
-					actionPrefKey = "overwriteorskip",
-					verbBtns = {
-						{ label = "Overwrite", verb = "overwrite"},
-						{ label = "Skip", verb = "skip"},
+				if not publish then
+					local overorskip = LrDialogs.promptForActionWithDoNotShow{
+						message = "Meta Export - File exists.",
+						info = "The file (" .. newfile .. ") already exists.\nDo you wish to overwrite the file?\n(Overwrite will completely delete the existing file. Skip will leave the existing file. Cancel will stop the export.)",
+						actionPrefKey = "overwriteorskip",
+						verbBtns = {
+							{ label = "Overwrite", verb = "overwrite"},
+							{ label = "Skip", verb = "skip"},
+						}
 					}
-				}
-				if overorskip == "overwrite" then
-					success, reason = LrFileUtils.delete(newfile)
-					if not success then
-						LrDialogs.message( "Meta Export - Warning", string.format("Cannot delete (%s): %s.\nFile will not be overwritten.", newfile, reason ) )
-						table.insert( failures, string.format("%s (File could not be overwritten.)", filename ) )
+					if overorskip == "overwrite" then
+						doCopy = dodelete(newfile, failures, publish)
+					elseif overorskip == false then
+						table.insert( failures, string.format("%s (User cancelled.)", filename ) )
+						break
+					else
 						doCopy = false
 					end
-				
-				elseif overorskip == false then
-					table.insert( failures, string.format("%s (User cancelled.)", filename ) )
-					break
-				else
-					doCopy = false
+				else 
+					doCopy = dodelete(newfile, failures, publish)
 				end
 			end
 			
 			if doCopy then
-				local success, reason = LrFileUtils.copy( pathOrMessage, LrPathUtils.child(newpath, filename) )
+				local success, reason = LrFileUtils.copy( pathOrMessage, newfile )
 				if not success then
 				
 					-- If we can't upload that file, log it.  For example, maybe user has exceeded disk
 					-- quota, or the file already exists and we don't have permission to overwrite, or
 					-- we don't have permission to write to that directory, etc....
 					table.insert( failures, string.format("%s (%s)", filename, reason ) )
+				else
+					-- Notify LR that we have "published" a file, if we are in publish mode
+					if publish then
+						rendition:recordPublishedPhotoId(filename)
+					end
 				end
 						
 				-- When done with photo, delete temp file. There is a cleanup step that happens later,
@@ -187,4 +197,17 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 		LrDialogs.message( message, table.concat( failures, "\n" ) )
 	end
 	
+end
+
+function dodelete(fname, failures, publish)
+	local filename = LrPathUtils.leafName( fname )
+	success, reason = LrFileUtils.delete(fname)
+	if not success then
+		if not publish then
+			LrDialogs.message( "Date Export - Warning", string.format("Cannot delete (%s): %s.\nFile will not be overwritten.", newfile, reason ) )
+		end
+		table.insert( failures, string.format("%s (File could not be overwritten.)", filename ) )
+		return false
+	end
+	return true
 end

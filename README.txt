@@ -28,6 +28,8 @@ image taken or the time of export.
 You can reset the "Do not show again" message prompt from the Lightroom Plug-in
 Manager window.
 
+(Icon by Roy Duncan)
+
 
 ==========================
 DATE FORMATTING CHARACTERS
