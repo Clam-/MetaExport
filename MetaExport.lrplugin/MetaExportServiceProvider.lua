@@ -5,10 +5,12 @@ Based on FtpUploadExportServiceProvider.lua
 
 ------------------------------------------------------------------------------]]
 
--- FtpUpload plug-in (just kidding)
+-- 
 require 'MetaExportDialogSections'
 require 'MetaExportTask'
+local LrDate = import 'LrDate'
 
+local curYear, curMonth, curDay, curHour, curMinute, curSecond = LrDate.timestampToComponents(LrDate.currentTime())
 
 --============================================================================--
 
@@ -28,6 +30,13 @@ return {
 		{ key = 'metaStripReplace', default = 'strip' },
 		{ key = 'metaReplace', default = '' },
 		{ key = 'timeSource', default = 'metadata' },
+		{ key = 'timeMissing', default = 'unix' },
+		{ key = 'timeYear', default = curYear },
+		{ key = 'timeMonth', default = curMonth },
+		{ key = 'timeDay', default = curDay },
+		{ key = 'timeHour', default = curHour },
+		{ key = 'timeMinute', default = curMinute },
+		{ key = 'timeSecond', default = curSecond },
 	},
 
 	startDialog = MetaExportDialogSections.startDialog,

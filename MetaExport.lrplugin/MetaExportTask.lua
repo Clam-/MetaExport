@@ -113,11 +113,30 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 			
 			-- build path
 			local t = nil
-			if timeSource == "metadata" then
+			if (timeSource == "metadata") then
 				t = rendition.photo:getRawMetadata("dateTimeOriginal")
-			elseif timeSource == "timeofexport" then
+				if ( (t == "") or (t == nil) ) then
+					t = rendition.photo:getRawMetadata("dateTimeDigitized")
+				end
+			elseif (timeSource == "timeofexport") then
 				t = texport
 			end
+			
+			-- handle missing time metadata
+			if (t == "" or t == nil ) then
+				if (exportParams.timeMissing == "unix" ) then
+					t = LrDate.timeFromPosixDate(0)					
+				elseif (exportParams.timeMissing == "skip" ) then
+					table.insert( failures, string.format("%s (No time metadata found, skipping.)", filename ) )
+				elseif (exportParams.timeMissing == "current" ) then
+					t = texport
+				elseif (exportParams.timeMissing == "custom" ) then
+					t = LrDate.timeFromComponents(exportParams.timeYear, 
+						exportParams.timeMonth, exportParams.timeDay, exportParams.timeHour,
+						exportParams.timeMinute, exportParams.timeSecond, "local")
+				end
+			end
+			
 			-- replace meta first, then date
 			--local newpath = interp(pathbase, rendition.photo:getFormattedMetadata())
 			local newpath = LrDate.timeToUserFormat(t, pathbase)
