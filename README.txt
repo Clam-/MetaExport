@@ -14,7 +14,7 @@ For example:
     will output to: S:\Somewhere\2012\3 - Lee\08\DSC_1527.jpg
 
 
-WARNING: THERE IS NO USER INPUT CHECKING.
+WARNING: THERE IS MINIMAL USER INPUT CHECKING.
          PLEASE BE CAREFUL WITH YOUR INPUT.
 ( The exception to this is that colon will be converted to underscore, 
   since that is the only character I found that broke.)
@@ -23,8 +23,12 @@ WARNING: THERE IS NO USER INPUT CHECKING.
 Note the use of /, I have no idea if \ will work as a path separator but since / 
 works on windows anyway, I would stick with that.
 
+Time will be sources from the dateTimeOriginal metadata, and if not found, will use
+dateTimeDigitized.
 You can select desired time source to use either the stored metadata for the time of
 image taken or the time of export.
+There are options for the handling of missing time metadata.
+
 You can reset the "Do not show again" message prompt from the Lightroom Plug-in
 Manager window.
 
