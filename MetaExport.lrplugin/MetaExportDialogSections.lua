@@ -176,7 +176,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "metaDefault",
 					truncation = 'middle',
-					fill_horizontal = 0.2,
+					fill_horizontal = 0.5,
 					wraps = false,
 					tooltip = "This is the default text to use when a specified metadata field is blank.",
 				},
@@ -189,7 +189,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "metaNonexist",
 					truncation = 'middle',
-					fill_horizontal = 0.2,
+					fill_horizontal = 0.5,
 					wraps = false,
 					tooltip = "This is the text to use when a specified metadata field doesn't exist\n" .. 
 					"(I don't know if this actually happens.)",
@@ -248,7 +248,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 			
 			f:row {
 				f:static_text {
-					title = "If no dateTimeOriginal meta: ",
+					title = "If no datetime meta: ",
 					alignment = 'right',
 					width = share 'labelWidth'
 				},
@@ -288,7 +288,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeYear",
 					truncation = 'middle',
-					fill_horizontal = 0.2,
+					fill_horizontal = 0.1,
 					wraps = false,
 					tooltip = "Year",
 				},
@@ -299,7 +299,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeMonth",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					fill_horizontal = 0.05,
 					wraps = false,
 					tooltip = "Month",
 				},
@@ -310,7 +310,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeDay",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					fill_horizontal = 0.05,
 					wraps = false,
 					tooltip = "Day",
 				},
@@ -321,7 +321,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeHour",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					fill_horizontal = 0.05,
 					wraps = false,
 					tooltip = "Hour (24 Hour time)",
 				},
@@ -332,7 +332,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeMinute",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					fill_horizontal = 0.05,
 					wraps = false,
 					tooltip = "Minute",
 				},
@@ -343,14 +343,14 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeSecond",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					fill_horizontal = 0.05,
 					wraps = false,
 					tooltip = "Second",
 				},
 			},
 			f:row {
 				f:static_text {
-					title = "Custom time preview:",
+					title = "Time preview:",
 					alignment = 'right',
 					width = share 'labelWidth'
 				},

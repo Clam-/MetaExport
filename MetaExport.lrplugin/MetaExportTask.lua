@@ -3,11 +3,6 @@
 MetaExportTask.lua
 based on FtpUploadTask.lua
 
-
-LrFileUtils.createAllDirectories( path )
-Creates a directory at a given path, recursively creating any parent directories that do not already exist.
-LrFileUtils.exists( path )
-Reports whether a given path indicates an existing file or directory.
 ------------------------------------------------------------------------------]]
 
 -- Lightroom API
@@ -121,7 +116,7 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 			elseif (timeSource == "timeofexport") then
 				t = texport
 			end
-			
+			local cont = true
 			-- handle missing time metadata
 			if (t == "" or t == nil ) then
 				if (exportParams.timeMissing == "unix" ) then
@@ -136,69 +131,71 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 						exportParams.timeMinute, exportParams.timeSecond, "local")
 				end
 			end
-			
-			-- replace meta first, then date
-			--local newpath = interp(pathbase, rendition.photo:getFormattedMetadata())
-			local newpath = LrDate.timeToUserFormat(t, pathbase)
-			newpath = interp(newpath, rendition.photo:getFormattedMetadata(), default, nonexist, metaSR, metaReplace )
-			
-			-- Translate BADCHARACTERS into safecharacter
-			newpath = newpath:gsub(":", "_")
-			
-			newpath = LrFileUtils.resolveAllAliases(LrPathUtils.child(root, newpath))
-			--do return end
-			
-			if not LrFileUtils.exists( newpath ) then LrFileUtils.createAllDirectories( newpath ) end
-			
-			--Check if file exists:
-			local newfile = LrPathUtils.child(newpath, filename)
-			local doCopy = true
+			if (cont == true) then
+				-- replace meta first, then date
+				--local newpath = interp(pathbase, rendition.photo:getFormattedMetadata())
+				local newpath = LrDate.timeToUserFormat(t, pathbase)
+				newpath = interp(newpath, rendition.photo:getFormattedMetadata(), default, nonexist, metaSR, metaReplace )
+				
+				-- Translate BADCHARACTERS into safecharacter
+				newpath = newpath:gsub(":", "_")
+				
+				newpath = LrFileUtils.resolveAllAliases(LrPathUtils.child(root, newpath))
+				--do return end
+				
+				if not LrFileUtils.exists( newpath ) then LrFileUtils.createAllDirectories( newpath ) end
+				
+				--Check if file exists:
+				local newfile = LrPathUtils.child(newpath, filename)
+				local doCopy = true
 
-			if LrFileUtils.exists( newfile ) then
-				if not publish then
-					local overorskip = LrDialogs.promptForActionWithDoNotShow{
-						message = "Meta Export - File exists.",
-						info = "The file (" .. newfile .. ") already exists.\nDo you wish to overwrite the file?\n(Overwrite will completely delete the existing file. Skip will leave the existing file. Cancel will stop the export.)",
-						actionPrefKey = "overwriteorskip",
-						verbBtns = {
-							{ label = "Overwrite", verb = "overwrite"},
-							{ label = "Skip", verb = "skip"},
+				if LrFileUtils.exists( newfile ) then
+					if not publish then
+						local overorskip = LrDialogs.promptForActionWithDoNotShow{
+							message = "Meta Export - File exists.",
+							info = "The file (" .. newfile .. ") already exists.\nDo you wish to overwrite the file?\n(Overwrite will completely delete the existing file. Skip will leave the existing file. Cancel will stop the export.)",
+							actionPrefKey = "overwriteorskip",
+							verbBtns = {
+								{ label = "Overwrite", verb = "overwrite"},
+								{ label = "Skip", verb = "skip"},
+							}
 						}
-					}
-					if overorskip == "overwrite" then
+						if overorskip == "overwrite" then
+							doCopy = dodelete(newfile, failures, publish)
+						elseif overorskip == false then
+							table.insert( failures, string.format("%s (User cancelled.)", filename ) )
+							break
+						else
+							doCopy = false
+						end
+					else 
 						doCopy = dodelete(newfile, failures, publish)
-					elseif overorskip == false then
-						table.insert( failures, string.format("%s (User cancelled.)", filename ) )
-						break
+					end
+				end
+				
+				if doCopy then
+					local success, reason = LrFileUtils.copy( pathOrMessage, newfile )
+					if not success then
+					
+						-- If we can't upload that file, log it.  For example, maybe user has exceeded disk
+						-- quota, or the file already exists and we don't have permission to overwrite, or
+						-- we don't have permission to write to that directory, etc....
+						table.insert( failures, string.format("%s (%s)", filename, reason ) )
 					else
-						doCopy = false
+						-- Notify LR that we have "published" a file, if we are in publish mode
+						if publish then
+							rendition:recordPublishedPhotoId(filename)
+						end
 					end
-				else 
-					doCopy = dodelete(newfile, failures, publish)
+							
+					-- When done with photo, delete temp file. There is a cleanup step that happens later,
+					-- but this will help manage space in the event of a large upload.
+					
+					LrFileUtils.delete( pathOrMessage )
 				end
-			end
-			
-			if doCopy then
-				local success, reason = LrFileUtils.copy( pathOrMessage, newfile )
-				if not success then
-				
-					-- If we can't upload that file, log it.  For example, maybe user has exceeded disk
-					-- quota, or the file already exists and we don't have permission to overwrite, or
-					-- we don't have permission to write to that directory, etc....
-					table.insert( failures, string.format("%s (%s)", filename, reason ) )
-				else
-					-- Notify LR that we have "published" a file, if we are in publish mode
-					if publish then
-						rendition:recordPublishedPhotoId(filename)
-					end
-				end
-						
-				-- When done with photo, delete temp file. There is a cleanup step that happens later,
-				-- but this will help manage space in the event of a large upload.
-				
+			else
 				LrFileUtils.delete( pathOrMessage )
 			end
-					
 		else
 			table.insert( failures, string.format("%s (%s)", filename, pathOrMessage ) )
 		end
