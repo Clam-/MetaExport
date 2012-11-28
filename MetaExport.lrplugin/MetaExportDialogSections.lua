@@ -124,28 +124,29 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 					alignment = 'right',
 					width = share 'labelWidth'
 				},
-			f:static_text {
-						fill_horizontal = 1,
-						title = bind 'path'
-					},
-			f:push_button {
-				title = "Browse ...",
-				enabled = true,
-				action = function (button)
-					local result = LrDialogs.runOpenPanel {
-						title = "Select Folder",
-						prompt = "OK",
-						initialDirectory = propertyTable.destPath,
-						canChooseFiles = false,
-						canChooseDirectories = true,
-						canCreateDirectories = true,
-						allowsMultipleSelection = false,
-					}
-					if result then
-						propertyTable.destPath = result[1]
+				f:static_text {
+					title = bind 'path',
+					truncation = 'head',
+					width = 330,
+				},
+				f:push_button {
+					title = "Browse ...",
+					enabled = true,
+					action = function (button)
+						local result = LrDialogs.runOpenPanel {
+							title = "Select Folder",
+							prompt = "OK",
+							initialDirectory = propertyTable.destPath,
+							canChooseFiles = false,
+							canChooseDirectories = true,
+							canCreateDirectories = true,
+							allowsMultipleSelection = false,
+						}
+						if result then
+							propertyTable.destPath = result[1]
+						end
 					end
-				end
-				}
+				},
 			},
 
 			f:row {
@@ -154,12 +155,10 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 					alignment = 'right',
 					width = share 'labelWidth'
 				},
-
 				f:edit_field {
 					value = bind "metaFormat",
-					truncation = 'middle',
 					immediate = true,
-					fill_horizontal = 1,
+					width = 420,
 					wraps = false,
 					tooltip = "This is the folder structure that files will be exported under.\n" .. 
 					"See README.txt for more information.",
@@ -175,8 +174,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 
 				f:edit_field {
 					value = bind "metaDefault",
-					truncation = 'middle',
-					fill_horizontal = 0.5,
+					width = 100,
 					wraps = false,
 					tooltip = "This is the default text to use when a specified metadata field is blank.",
 				},
@@ -188,8 +186,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 
 				f:edit_field {
 					value = bind "metaNonexist",
-					truncation = 'middle',
-					fill_horizontal = 0.5,
+					width = 100,
 					wraps = false,
 					tooltip = "This is the text to use when a specified metadata field doesn't exist\n" .. 
 					"(I don't know if this actually happens.)",
@@ -219,6 +216,7 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "metaReplace",
 					truncation = 'middle',
+					width = 100,
 					wraps = false,
 					tooltip = "This is the text to replace slashes in metadata with.\n" .. 
 					"There's nothing stopping you from putting / here if you want metadata splitted folders.",
@@ -288,7 +286,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeYear",
 					truncation = 'middle',
-					fill_horizontal = 0.1,
+					width = 45,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Year",
 				},
@@ -299,7 +299,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeMonth",
 					truncation = 'middle',
-					fill_horizontal = 0.05,
+					width = 30,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Month",
 				},
@@ -310,7 +312,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeDay",
 					truncation = 'middle',
-					fill_horizontal = 0.05,
+					width = 30,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Day",
 				},
@@ -321,7 +325,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeHour",
 					truncation = 'middle',
-					fill_horizontal = 0.05,
+					width = 30,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Hour (24 Hour time)",
 				},
@@ -332,7 +338,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeMinute",
 					truncation = 'middle',
-					fill_horizontal = 0.05,
+					width = 30,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Minute",
 				},
@@ -343,7 +351,9 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 				f:edit_field {
 					value = bind "timeSecond",
 					truncation = 'middle',
-					fill_horizontal = 0.05,
+					width = 30,
+					max = 999999,
+					precision = 0,
 					wraps = false,
 					tooltip = "Second",
 				},
