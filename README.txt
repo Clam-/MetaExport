@@ -23,7 +23,7 @@ WARNING: THERE IS MINIMAL USER INPUT CHECKING.
 Note the use of /, I have no idea if \ will work as a path separator but since / 
 works on windows anyway, I would stick with that.
 
-Time will be sources from the dateTimeOriginal metadata, and if not found, will use
+Time will be sourced from the dateTimeOriginal metadata and if not found will use
 dateTimeDigitized.
 You can select desired time source to use either the stored metadata for the time of
 image taken or the time of export.
