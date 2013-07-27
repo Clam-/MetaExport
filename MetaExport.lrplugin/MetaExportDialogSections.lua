@@ -10,7 +10,8 @@ Export dialog customization for Folder Structure
 local LrView = import 'LrView'
 local LrDialogs = import 'LrDialogs'
 local LrDate = import 'LrDate'
-
+local LrApplication = import 'LrApplication'
+local LrTasks = import "LrTasks"
 --============================================================================--
 require 'MetaUtil'
 
@@ -19,9 +20,10 @@ MetaExportDialogSections = {}
 -------------------------------------------------------------------------------
 
 local function updateExportStatus( propertyTable )
-	
+	local photo = LrApplication.activeCatalog():getTargetPhoto()
 	local message = nil
 	local teatime = nil
+	local texport = LrDate.currentTime()
 	repeat
 		-- Use a repeat loop to allow easy way to "break" out.
 		-- (It only goes through once.)
@@ -53,36 +55,63 @@ local function updateExportStatus( propertyTable )
 			teatime = "Invalid custom date value"
 			break
 		end
-		
-		if ( propertyTable.timeMissing == "unix" ) then
-			teatime = LrDate.timeToUserFormat(LrDate.timeFromPosixDate(0),
-				"%Y-%m-%dT%H:%M:%S" .. tzstring(LrDate.timeZone()) )
-		elseif ( propertyTable.timeMissing == "custom" ) then
-			teatime = LrDate.timeToUserFormat(LrDate.timeFromComponents(propertyTable.timeYear, 
-				propertyTable.timeMonth, propertyTable.timeDay, propertyTable.timeHour,
-				propertyTable.timeMinute, propertyTable.timeSecond, "local"),
-				"%Y-%m-%dT%H:%M:%S" .. tzstring(LrDate.timeZone()) )
-		elseif ( propertyTable.timeMissing == "current" ) then
-			teatime = LrDate.timeToUserFormat(LrDate.currentTime(),
-				"%Y-%m-%dT%H:%M:%S" .. tzstring(LrDate.timeZone()))
-		elseif ( propertyTable.timeMissing == "skip" ) then
-			teatime = "skipped."
+		if photo then
+			LrTasks.startAsyncTask( 
+				function()
+					local ttime = buildtime(photo, propertyTable, texport)
+					if (not ttime) then
+						ttime = "skipped."
+					else
+						ttime = LrDate.timeToUserFormat(ttime, 
+							"%Y-%m-%dT%H:%M:%S" .. tzstring(LrDate.timeZone()))
+					end
+				propertyTable.teatime = ttime
+				end
+			)
+		else
+			local ttime = buildtime(PhotoDummy.create(321107147), propertyTable, texport)
+			if (not ttime) then
+				ttime = "skipped."
+			else
+				ttime = LrDate.timeToUserFormat(ttime, 
+					"%Y-%m-%dT%H:%M:%S" .. tzstring(LrDate.timeZone()))
+			end
+			propertyTable.teatime = ttime
 		end
-		
 	until true
 	propertyTable.path = propertyTable.destPath
-	propertyTable.teatime = teatime
+	
 	
 	if message then
 		propertyTable.message = message
 		propertyTable.hasError = true
 		propertyTable.hasNoError = false
 		propertyTable.LR_cantExportBecause = message
+		propertyTable.folderprev = message
 	else
 		propertyTable.message = nil
 		propertyTable.hasError = false
 		propertyTable.hasNoError = true
 		propertyTable.LR_cantExportBecause = nil
+		if photo then
+			LrTasks.startAsyncTask( 
+				function()
+					local fprev = buildpath(photo, propertyTable, texport)
+					if (not fprev) then
+						propertyTable.folderprev = "skipped."
+					else
+						propertyTable.folderprev = fprev
+					end
+				end
+			)
+		else 
+			local fprev = buildpath(PhotoDummy.create(321107147), propertyTable, texport)
+			if (not fprev) then
+				propertyTable.folderprev = "skipped."
+			else
+				propertyTable.folderprev = fprev
+			end
+		end
 	end
 	
 end
@@ -93,7 +122,12 @@ function MetaExportDialogSections.startDialog( propertyTable )
 	
 	propertyTable:addObserver( 'destPath', updateExportStatus )
 	propertyTable:addObserver( 'metaFormat', updateExportStatus )
+	propertyTable:addObserver( 'metaDefault', updateExportStatus )
+	propertyTable:addObserver( 'metaNonexist', updateExportStatus )
+	propertyTable:addObserver( 'metaStripReplace', updateExportStatus )
+	propertyTable:addObserver( 'metaReplace', updateExportStatus )
 	propertyTable:addObserver( 'timeMissing', updateExportStatus )
+	propertyTable:addObserver( 'timeSource', updateExportStatus )
 	propertyTable:addObserver( 'timeYear', updateExportStatus )
 	propertyTable:addObserver( 'timeMonth', updateExportStatus )
 	propertyTable:addObserver( 'timeDay', updateExportStatus )
@@ -107,9 +141,8 @@ end
 
 -------------------------------------------------------------------------------
 
-function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
+function MetaExportDialogSections.sectionsForBottomOfDialog( f, propertyTable )
 
-	local f = LrView.osFactory()
 	local bind = LrView.bind
 	local share = LrView.share
 
@@ -164,7 +197,17 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 					"See README.txt for more information.",
 				},
 			},
-			
+			f:row {
+				f:static_text {
+					title = "Folder preview:",
+					alignment = 'right',
+					width = share 'labelWidth'
+				},
+				f:static_text {
+					title = bind 'folderprev',
+					fill_horizontal = 1,
+				},
+			},
 			f:row {
 				f:static_text {
 					title = "Default metadata:",
@@ -176,7 +219,8 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 					value = bind "metaDefault",
 					width = 100,
 					wraps = false,
-					tooltip = "This is the default text to use when a specified metadata field is blank.",
+					tooltip = "This is the default text to use when a specified metadata field is blank.\n" .. 
+						"(Post stripping and slicing operations.)",
 				},
 				
 				f:static_text {
@@ -188,8 +232,8 @@ function MetaExportDialogSections.sectionsForBottomOfDialog( _, propertyTable )
 					value = bind "metaNonexist",
 					width = 100,
 					wraps = false,
-					tooltip = "This is the text to use when a specified metadata field doesn't exist\n" .. 
-					"(I don't know if this actually happens.)",
+					tooltip = "This is the text to use when a specified metadata field doesn't exist.\n" ..
+						'If this is left blank the key will be use. E.g. ${key} "key" will be used.',
 				},
 			},
 			f:row {

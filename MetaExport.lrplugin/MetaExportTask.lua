@@ -72,9 +72,7 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 	else
 		atitle = "Meta Exporting 1 photo..."
 	end
-	local progressScope = exportContext:configureProgress {
-						title = atitle,
-					}
+	local progressScope = exportContext:configureProgress {title = atitle,}
 
 	local failures = {}
 	
@@ -103,46 +101,11 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 		end
 		
 		if success then
-
 			local filename = LrPathUtils.leafName( pathOrMessage )
 			
-			-- build path
-			local t = nil
-			if (timeSource == "metadata") then
-				t = rendition.photo:getRawMetadata("dateTimeOriginal")
-				if ( (t == "") or (t == nil) ) then
-					t = rendition.photo:getRawMetadata("dateTimeDigitized")
-				end
-			elseif (timeSource == "timeofexport") then
-				t = texport
-			end
-			local cont = true
-			-- handle missing time metadata
-			if (t == "" or t == nil ) then
-				if (exportParams.timeMissing == "unix" ) then
-					t = LrDate.timeFromPosixDate(0)					
-				elseif (exportParams.timeMissing == "skip" ) then
-					table.insert( failures, string.format("%s (No time metadata found, skipping.)", filename ) )
-				elseif (exportParams.timeMissing == "current" ) then
-					t = texport
-				elseif (exportParams.timeMissing == "custom" ) then
-					t = LrDate.timeFromComponents(exportParams.timeYear, 
-						exportParams.timeMonth, exportParams.timeDay, exportParams.timeHour,
-						exportParams.timeMinute, exportParams.timeSecond, "local")
-				end
-			end
-			if (cont == true) then
-				-- replace meta first, then date
-				--local newpath = interp(pathbase, rendition.photo:getFormattedMetadata())
-				local newpath = LrDate.timeToUserFormat(t, pathbase)
-				newpath = interp(newpath, rendition.photo:getFormattedMetadata(), default, nonexist, metaSR, metaReplace )
-				
-				-- Translate BADCHARACTERS into safecharacter
-				newpath = newpath:gsub(":", "_")
-				
-				newpath = LrFileUtils.resolveAllAliases(LrPathUtils.child(root, newpath))
-				--do return end
-				
+			-- do all the fancy path stuff
+			local newpath = buildpath(rendition.photo, exportParams, texport, failures)
+			if newpath then
 				if not LrFileUtils.exists( newpath ) then LrFileUtils.createAllDirectories( newpath ) end
 				
 				--Check if file exists:
@@ -187,15 +150,11 @@ function MetaExportTask.processRenderedPhotos( functionContext, exportContext )
 							rendition:recordPublishedPhotoId(filename)
 						end
 					end
-							
-					-- When done with photo, delete temp file. There is a cleanup step that happens later,
-					-- but this will help manage space in the event of a large upload.
-					
-					LrFileUtils.delete( pathOrMessage )
 				end
-			else
-				LrFileUtils.delete( pathOrMessage )
 			end
+			-- When done with photo, delete temp file. There is a cleanup step that happens later,
+			-- but this will help manage space in the event of a large upload.
+			LrFileUtils.delete( pathOrMessage )
 		else
 			table.insert( failures, string.format("%s (%s)", filename, pathOrMessage ) )
 		end
