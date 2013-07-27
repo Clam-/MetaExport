@@ -2,17 +2,26 @@ MetaExport (git)
 
 Allows you to export to a metadata + dated folder hierarchy.
 For example:
-
     Destination: D:\photos
     Folder format: place/${city}/%Y/%m/%d/%1I%p
     will output to: D:\photos\place\Melbourne\2012\05\24\04AM\DSC_2239.jpg
-
 (If the city metadata is blank, you can specify a default value [Default metadata] )
 
     Destination: S:\Somewhere
     Folder format: %Y/${rating} - ${artist}/%m
     will output to: S:\Somewhere\2012\3 - Lee\08\DSC_1527.jpg
 
+Slicing of metadata values is supported (${metadataField:start:end}):
+    Destination: S:\pics
+    Folder format: %Y/${jobIdentifier} - ${fileName:1:4}
+    will output to: S:\pics\2013\AppleJob - DSC_\DSC_1527.jpg
+
+You can use negative indexing to specify "from the end of the value":
+    Destination: S:\pics
+    Folder format: %Y/${jobIdentifier} - ${fileName:4:-4}
+    will output to: S:\pics\2013\AppleJob - 1527\DSC_1527.jpg
+(Note in this case there will be a new folder for every shot because the slicing
+includes parts of the string that are unique for every file.)
 
 WARNING: THERE IS MINIMAL USER INPUT CHECKING.
          PLEASE BE CAREFUL WITH YOUR INPUT.
