@@ -124,7 +124,7 @@ cameraSerialNumber:      The camera serial number
 artist:                  The artist's name
 software:                The software used to process/create photo
 gps:                     The location of this photo 
-    (for example, "37°56'10" N 27°20'42" E")
+    (for example, "37Â°56'10" N 27Â°20'42" E")
 
 gpsAltitude:             The GPS altitude for this photo (for example, "82.3 m")
 creator:                 The name of the person that created this image
