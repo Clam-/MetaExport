@@ -236,7 +236,6 @@ NOT AVAILABLE means that the data is in a table and not easily represented as a 
 CHANGELOG
 ---------
 
-
 * 2012-04-05
     * Moved to github
 
