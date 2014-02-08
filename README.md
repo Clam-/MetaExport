@@ -2,9 +2,11 @@
 
 Allows you to export to a metadata + dated folder hierarchy.
 For example:
+
     Destination: D:\photos
     Folder format: place/${city}/%Y/%m/%d/%1I%p
     will output to: D:\photos\place\Melbourne\2012\05\24\04AM\DSC_2239.jpg
+
 (If the city metadata is blank, you can specify a default value [Default metadata] )
 
     Destination: S:\Somewhere
@@ -12,6 +14,7 @@ For example:
     will output to: S:\Somewhere\2012\3 - Lee\08\DSC_1527.jpg
 
 Slicing of metadata values is supported (${metadataField:start:end}):
+
     Destination: S:\pics
     Folder format: %Y/${jobIdentifier} - ${fileName:1:4}
     will output to: S:\pics\2013\AppleJob - DSC_\DSC_1527.jpg
