@@ -19,30 +19,27 @@ Slicing of metadata values is supported (${metadataField:start:end}):
     Folder format: %Y/${jobIdentifier} - ${fileName:1:4}
     will output to: S:\pics\2013\AppleJob - DSC_\DSC_1527.jpg
 
-You can use negative indexing to specify "from the end of the value":
-    Destination: S:\pics
-    Folder format: %Y/${jobIdentifier} - ${fileName:4:-4}
-    will output to: S:\pics\2013\AppleJob - 1527\DSC_1527.jpg
-(Note in this case there will be a new folder for every shot because the slicing
-includes parts of the string that are unique for every file.)
+You can use negative indexing to specify from the **end** of the value:
 
-WARNING: THERE IS MINIMAL USER INPUT CHECKING.
-         PLEASE BE CAREFUL WITH YOUR INPUT.
-( The exception to this is that colon will be converted to underscore, 
-  since that is the only character I found that broke.)
+	Destination: S:\pics
+	Folder format: %Y/${jobIdentifier} - ${fileName:4:-4}
+	will output to: S:\pics\2013\AppleJob - 1527\DSC_1527.jpg
 
- 
-Note the use of /, I have no idea if \ will work as a path separator but since / 
-works on windows anyway, I would stick with that.
+(Note in this case there will be a new folder for every shot because the slicing includes parts of the string that are unique for every file.)
 
-Time will be sourced from the dateTimeOriginal metadata and if not found will use
-dateTimeDigitized.
-You can select desired time source to use either the stored metadata for the time of
-image taken or the time of export.
+WARNING: **THERE IS MINIMAL USER INPUT CHECKING. PLEASE BE CAREFUL WITH YOUR INPUT.**
+
+(The exception to this is that colon will be converted to underscore, since that is the only character I found that broke.)
+
+Note the use of `/`, I have no idea if `\` will work as a path separator but since `/` works on windows anyway, I would stick with that.
+
+Time will be sourced from the dateTimeOriginal metadata and if not found will use dateTimeDigitized.
+
+You can select desired time source to use either the stored metadata for the time of image taken or the time of export.
+
 There are options for the handling of missing time metadata.
 
-You can reset the "Do not show again" message prompt from the Lightroom Plug-in
-Manager window.
+You can reset the "Do not show again" message prompt from the Lightroom Plug-in Manager window.
 
 (Icon by Roy Duncan)
 
@@ -231,9 +228,8 @@ digImageGUID:            Globally unique identifier for the item, created and ap
 plusVersion:             The version number of the PLUS standards in place at the
     time of the transaction
 
+NOT AVAILABLE means that the data is in a table and not easily represented as a string. If someone really wants these fields available I can work something out.
 
-NOT AVAILABLE means that the data is in a table and not easily represented as a 
-string. If someone really wants these fields available I can work something out.
 
 
 CHANGELOG
