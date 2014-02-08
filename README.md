@@ -1,4 +1,4 @@
-MetaExport (git)
+# MetaExport (git)
 
 Allows you to export to a metadata + dated folder hierarchy.
 For example:
@@ -44,9 +44,10 @@ Manager window.
 (Icon by Roy Duncan)
 
 
-==========================
+
 DATE FORMATTING CHARACTERS
-==========================
+--------------------------
+
 
 %B:    Full name of month
 %b:    3-letter name of month
@@ -68,9 +69,7 @@ DATE FORMATTING CHARACTERS
 %%:    % symbol
 
 
-===========================
 METADATA FORMATTING STRINGS
-===========================
 When you want to use one of these fields, encase it in ${}
 For example: 
     ${fileType} or ${jobIdentifier}
@@ -210,6 +209,8 @@ maxAvailWidth:           The maximum available width in pixels of the original p
 
 maxAvailHeight:          The maximum available height in pixels of the original photo
     from which this photo has been derived by downsizing
+--------------------------
+
 
 sourceType:              The type of the source of this digital image, selected from
     a controlled vocabulary
@@ -232,10 +233,10 @@ NOT AVAILABLE means that the data is in a table and not easily represented as a
 string. If someone really wants these fields available I can work something out.
 
 
-=========
 CHANGELOG
-=========
 2012-04-05
+---------
+
     * Moved to github
 
 2012-03-29      0.2
