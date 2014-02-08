@@ -13,7 +13,7 @@ For example:
     Folder format: %Y/${rating} - ${artist}/%m
     will output to: S:\Somewhere\2012\3 - Lee\08\DSC_1527.jpg
 
-Slicing of metadata values is supported (${metadataField:start:end}):
+Slicing of metadata values is supported: `${metadataField:start:end}`
 
     Destination: S:\pics
     Folder format: %Y/${jobIdentifier} - ${fileName:1:4}
