@@ -237,14 +237,15 @@ string. If someone really wants these fields available I can work something out.
 
 
 CHANGELOG
-2012-04-05
 ---------
 
+
+* 2012-04-05
     * Moved to github
 
-2012-03-29      0.2
+* 2012-03-29 — **0.2**
     * Added selectable time source (metadata/now)
     * Handled copy errors a little better
 
-2012-03-12      0.1
+* 2012-03-12 — **0.1**
     * Initial release
