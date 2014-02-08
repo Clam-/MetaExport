@@ -48,25 +48,26 @@ You can reset the "Do not show again" message prompt from the Lightroom Plug-in 
 DATE FORMATTING CHARACTERS
 --------------------------
 
+Character | Description
+----------|---
+`%B`      |  Full name of month
+`%b`      |  3-letter name of month
+`%m`      |  2-digit month number
+`%d`      |  Day number with leading zero
+`%e`      |  Day number without leading zero
+`%j`      |  Julian day of the year with leading zero
+`%y`      |  2-digit year number
+`%Y`      |  4-digit year number
+`%H`      |  Hour with leading zero (24-hour clock)
+`%1H`     |  Hour without leading zero (24-hour clock)
+`%I`      |  Hour with leading zero (12-hour clock)
+`%1I`     |  Hour without leading zero (12-hour clock)
+`%M`      |  Minute with leading zero
+`%S`      |  Second with leading zero
+`%p`      |  AM/PM designation
+`%P`      |  AM/PM designation, same as %p,but causes white space trimming to be applied as the last formatting step.
+`%%`      |  % symbol
 
-%B:    Full name of month
-%b:    3-letter name of month
-%m:    2-digit month number
-%d:    Day number with leading zero
-%e:    Day number without leading zero
-%j:    Julian day of the year with leading zero
-%y:    2-digit year number
-%Y:    4-digit year number
-%H:    Hour with leading zero (24-hour clock)
-%1H:   Hour without leading zero (24-hour clock)
-%I:    Hour with leading zero (12-hour clock)
-%1I:   Hour without leading zero (12-hour clock)
-%M:    Minute with leading zero
-%S:    Second with leading zero
-%p:    AM/PM designation
-%P:    AM/PM designation, same as %p,but causes white space trimming to be applied
-    as the last formatting step.
-%%:    % symbol
 
 
 METADATA FORMATTING STRINGS
