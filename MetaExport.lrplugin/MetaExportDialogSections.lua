@@ -78,10 +78,42 @@ local function updateExportStatus( propertyTable )
 			end
 			propertyTable.teatime = ttime
 		end
+	
+		propertyTable.path = propertyTable.destPath
+		
+		if photo then
+			LrTasks.startAsyncTask( 
+				function()
+					local status, fprev = LrTasks.pcall(buildpath, photo, propertyTable, texport)
+					if status then
+						if (not fprev) then
+							propertyTable.folderprev = "skipped."
+						else
+							propertyTable.folderprev = fprev
+						end
+					else
+						propertyTable.folderprev = "Error. " .. fprev
+						propertyTable.message = "Error. " .. fprev
+						propertyTable.hasError = true
+						propertyTable.hasNoError = false
+						propertyTable.LR_cantExportBecause = "Error. " .. fprev
+					end
+				end
+			)
+		else 
+			local status, fprev = pcall(buildpath, PhotoDummy.create(321107147), propertyTable, texport)
+			if status then
+				if (not fprev) then
+					propertyTable.folderprev = "skipped."
+				else
+					propertyTable.folderprev = fprev
+				end
+			else
+				message = "Error. " .. fprev
+			end
+		end
 	until true
-	propertyTable.path = propertyTable.destPath
-	
-	
+
 	if message then
 		propertyTable.message = message
 		propertyTable.hasError = true
@@ -93,26 +125,8 @@ local function updateExportStatus( propertyTable )
 		propertyTable.hasError = false
 		propertyTable.hasNoError = true
 		propertyTable.LR_cantExportBecause = nil
-		if photo then
-			LrTasks.startAsyncTask( 
-				function()
-					local fprev = buildpath(photo, propertyTable, texport)
-					if (not fprev) then
-						propertyTable.folderprev = "skipped."
-					else
-						propertyTable.folderprev = fprev
-					end
-				end
-			)
-		else 
-			local fprev = buildpath(PhotoDummy.create(321107147), propertyTable, texport)
-			if (not fprev) then
-				propertyTable.folderprev = "skipped."
-			else
-				propertyTable.folderprev = fprev
-			end
-		end
 	end
+	
 	
 end
 

@@ -121,7 +121,7 @@ PhotoDummy.__index = PhotoDummy
 
 function PhotoDummy.create(t)
    local photo = {}             -- our new object
-   setmetatable(photo, Account)  -- make PhotoDummy handle lookup
+   setmetatable(photo, PhotoDummy)  -- make PhotoDummy handle lookup
    photo.time = t      -- initialize our object
    return photo
 end
