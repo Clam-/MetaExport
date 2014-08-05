@@ -15,7 +15,7 @@ local LrDate = import 'LrDate'
 --============================================================================--
 
 -- import util
-require 'MetaUtil'
+require 'MetaHelpers'
 require 'Util'
 
 MetaExportTask = {}

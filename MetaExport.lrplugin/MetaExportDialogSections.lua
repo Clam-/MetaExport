@@ -13,7 +13,7 @@ local LrDate = import 'LrDate'
 local LrApplication = import 'LrApplication'
 local LrTasks = import "LrTasks"
 --============================================================================--
-require 'MetaUtil'
+require 'MetaHelpers'
 require 'Util'
 
 MetaExportDialogSections = {}
