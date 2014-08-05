@@ -20,7 +20,9 @@ return {
 	},
 	
 	LrPluginInfoProvider = 'MetaExportInfoProvider.lua',
-
-	VERSION = { major=0, minor=6, revision=0, build=0, },
+	
+	LrPluginInfoUrl = 'https://github.com/Clam-/MetaExport',
+	
+	VERSION = { major=0, minor=7, revision=0, build=0, },
 
 }

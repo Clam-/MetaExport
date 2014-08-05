@@ -46,6 +46,6 @@ return {
 	
 	supportsIncrementalPublish = true,
 	canExportVideo = true,
-	small_icon = 'icon.png'
+	small_icon = 'Assets/icon.png'
 	
 }
