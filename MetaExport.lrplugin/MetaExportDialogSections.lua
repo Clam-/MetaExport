@@ -14,6 +14,7 @@ local LrApplication = import 'LrApplication'
 local LrTasks = import "LrTasks"
 --============================================================================--
 require 'MetaUtil'
+require 'Util'
 
 MetaExportDialogSections = {}
 
